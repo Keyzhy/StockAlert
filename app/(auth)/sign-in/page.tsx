@@ -6,6 +6,8 @@ import InputField from "@/components/forms/inputField";
 import FooterLink from "@/components/forms/FooterLink";
 
 import { useRouter } from "next/navigation";
+import { SignInWithEmail } from "@/lib/actions/auth.actions";
+import { toast } from "sonner";
 
 const SignIn = () => {
   const router = useRouter();
@@ -23,9 +25,15 @@ const SignIn = () => {
 
   const onSubmit = async (data: SignInFormData) => {
     try {
+      const result = await SignInWithEmail(data);
+      if (result.success) router.push("/");
       console.log(data);
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      toast.error("Failed to sign in", {
+        description:
+          error instanceof Error ? error.message : "Something went wrong",
+      });
+      console.error(error);
     }
   };
 

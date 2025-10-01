@@ -1,17 +1,21 @@
 "use client";
+import { CountrySelectField } from "@/components/forms/CountrySelectField";
+import FooterLink from "@/components/forms/FooterLink";
 import InputField from "@/components/forms/inputField";
 import SelectField from "@/components/forms/SelectField";
 import { Button } from "@/components/ui/button";
+import { SignUpWithEmail } from "@/lib/actions/auth.actions";
 import {
   INVESTMENT_GOALS,
   PREFERRED_INDUSTRIES,
   RISK_TOLERANCE_OPTIONS,
 } from "@/lib/constants";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { CountrySelectField } from "@/components/forms/CountrySelectField";
-import FooterLink from "@/components/forms/FooterLink";
+import { toast } from "sonner";
 
 const SignUp = () => {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -32,9 +36,15 @@ const SignUp = () => {
 
   const onSubmit = async (data: SignUpFormData) => {
     try {
+      const result = await SignUpWithEmail(data);
+      if (result.success) router.push("/");
       console.log(data);
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      toast.error("Failed to sign up", {
+        description:
+          error instanceof Error ? error.message : "Something went wrong",
+      });
+      console.error(error);
     }
   };
 
